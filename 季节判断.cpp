@@ -1,91 +1,91 @@
-ï»¿#include <stdio.h>
+#include <stdio.h>
 
 void GetYMD(int &iYear, int &iMonth, int &iDay)
 {
-	constexpr static const int iDaysOfMonth[2][12] =//[0][n-1]å°±æ˜¯å¹³å¹´nå°±æ˜¯æœˆä»½æ•° [1][n-1]å°±æ˜¯é—°å¹´nå°±æ˜¯æœˆä»½æ•°ï¼Œè®¿é—®ç»“æœæ˜¯è¿™ä¸ªæœˆä»½æœ‰å¤šå°‘å¤©
+	constexpr static const int iDaysOfMonth[2][12] =//[0][n-1]¾ÍÊÇÆ½Äên¾ÍÊÇÔÂ·İÊı [1][n-1]¾ÍÊÇÈòÄên¾ÍÊÇÔÂ·İÊı£¬·ÃÎÊ½á¹ûÊÇÕâ¸öÔÂ·İÓĞ¶àÉÙÌì
 	{
 		{31,28,31,30,31,30,31,31,30,31,30,31,},
 		{31,29,31,30,31,30,31,31,30,31,30,31,},
 	};
 
-	printf("è¯·è¾“å…¥å¹´æœˆæ—¥:");
+	printf("ÇëÊäÈëÄêÔÂÈÕ:");
 
 	while (true)
 	{
 		while (scanf("%d%d%d", &iYear, &iMonth, &iDay) != 3)
 		{
-			while (getchar() != '\n')//æ¸…ç†ä¸€è¡Œ
+			while (getchar() != '\n')//ÇåÀíÒ»ĞĞ
 			{
 				continue;
 			}
-			printf("è¾“å…¥é”™è¯¯ï¼Œè¯·é‡æ–°è¾“å…¥:");
+			printf("ÊäÈë´íÎó£¬ÇëÖØĞÂÊäÈë:");
 		}
 
-		while (getchar() != '\n')//æ¸…ç†å‰©ä½™å†…å®¹
+		while (getchar() != '\n')//ÇåÀíÊ£ÓàÄÚÈİ
 		{
 			continue;
 		}
 
-		//åˆ¤æ–­é—°å¹´
+		//ÅĞ¶ÏÈòÄê
 		bool bLeapYear = (iYear % 4 == 0 && iYear % 100 != 0) || iYear % 400 == 0;
 
 		if (iYear < 0)
 		{
-			printf("å¹´ä»½é”™è¯¯ï¼Œè¯·é‡æ–°è¾“å…¥:\n");
+			printf("Äê·İ´íÎó£¬ÇëÖØĞÂÊäÈë:\n");
 			continue;
 		}
 
 		if (iMonth < 1 || iMonth > 12)
 		{
-			printf("æœˆä»½é”™è¯¯ï¼Œè¯·é‡æ–°è¾“å…¥:\n");
+			printf("ÔÂ·İ´íÎó£¬ÇëÖØĞÂÊäÈë:\n");
 			continue;
 		}
 
-		if (iDay < 1 || iDay > iDaysOfMonth[bLeapYear][iMonth - 1])//æ³¨æ„è¿™é‡Œæ˜¯iMonth - 1
+		if (iDay < 1 || iDay > iDaysOfMonth[bLeapYear][iMonth - 1])//×¢ÒâÕâÀïÊÇiMonth - 1
 		{
-			printf("æ—¥æœŸé”™è¯¯ï¼Œè¯·é‡æ–°è¾“å…¥:\n");
+			printf("ÈÕÆÚ´íÎó£¬ÇëÖØĞÂÊäÈë:\n");
 			continue;
 		}
 
-		break;//è¾“å…¥æ­£ç¡®ï¼Œé€€å‡º
+		break;//ÊäÈëÕıÈ·£¬ÍË³ö
 	}
 }
 
 const char* Season(int iYear, int iMonth, int iDay)
 {
 	/*
-	æ˜¥å­£		3æœˆ20æ—¥è‡³6æœˆ20æ—¥
-	å¤å­£		6æœˆ21æ—¥è‡³9æœˆ21æ—¥
-	ç§‹å­£		9æœˆ22æ—¥è‡³12æœˆ20æ—¥
-	å†¬å­£		12æœˆ21æ—¥è‡³æ¬¡å¹´3æœˆ19æ—¥
+	´º¼¾		3ÔÂ20ÈÕÖÁ6ÔÂ20ÈÕ
+	ÏÄ¼¾		6ÔÂ21ÈÕÖÁ9ÔÂ21ÈÕ
+	Çï¼¾		9ÔÂ22ÈÕÖÁ12ÔÂ20ÈÕ
+	¶¬¼¾		12ÔÂ21ÈÕÖÁ´ÎÄê3ÔÂ19ÈÕ
 	*/
 
 	constexpr static const struct
 	{
-		int iMonthBeg;//æœˆä»½èµ·å§‹å€¼(é—­åŒºé—´)ä¼˜å…ˆåˆ¤å®šï¼Œå–åˆ°æ‰è¿›è¡Œé™„åŠ åˆ¤æ–­
-		int iDayBeg;//æ—¥æœŸèµ·å§‹å€¼(é—­åŒºé—´)é™„åŠ åˆ¤å®š
-		int iMonthEnd;//æœˆä»½ç»ˆæ­¢å€¼(é—­åŒºé—´)ä¼˜å…ˆåˆ¤å®šï¼Œå–åˆ°æ‰è¿›è¡Œé™„åŠ åˆ¤æ–­
-		int iDayEnd;//æ—¥æœŸç»ˆæ­¢å€¼(é—­åŒºé—´)é™„åŠ åˆ¤å®š
-		const char *pSeasonName;//å­£èŠ‚åç§°
-		bool bAnd;//é—­ç¯è¿˜æ˜¯å¼€ç¯ï¼Œé—­ç¯(true)åˆ¤æ–­å€¼åœ¨é—­åŒºé—´å†…æˆç«‹ï¼Œå¼€ç¯(false)åˆ¤æ–­å€¼åœ¨é—­åŒºé—´å¤–æˆç«‹
+		int iMonthBeg;//ÔÂ·İÆğÊ¼Öµ(±ÕÇø¼ä)ÓÅÏÈÅĞ¶¨£¬È¡µ½²Å½øĞĞ¸½¼ÓÅĞ¶Ï
+		int iDayBeg;//ÈÕÆÚÆğÊ¼Öµ(±ÕÇø¼ä)¸½¼ÓÅĞ¶¨
+		int iMonthEnd;//ÔÂ·İÖÕÖ¹Öµ(±ÕÇø¼ä)ÓÅÏÈÅĞ¶¨£¬È¡µ½²Å½øĞĞ¸½¼ÓÅĞ¶Ï
+		int iDayEnd;//ÈÕÆÚÖÕÖ¹Öµ(±ÕÇø¼ä)¸½¼ÓÅĞ¶¨
+		const char *pSeasonName;//¼¾½ÚÃû³Æ
+		bool bAnd;//±Õ»·»¹ÊÇ¿ª»·£¬±Õ»·(true)ÅĞ¶ÏÖµÔÚ±ÕÇø¼äÄÚ³ÉÁ¢£¬¿ª»·(false)ÅĞ¶ÏÖµÔÚ±ÕÇø¼äÍâ³ÉÁ¢
 	}
-	stSeason[] =//ç»“æ„ä½“æ•°ç»„ï¼Œè‡ªåŠ¨æ±‚å¤§å°
+	stSeason[] =//½á¹¹ÌåÊı×é£¬×Ô¶¯Çó´óĞ¡
 	{
-		{ 3,20, 6,20,"æ˜¥å­£",true},// [ 3.20, 6.20]æˆç«‹
-		{ 6,21, 9,21,"å¤å­£",true},// [ 6.21, 9.21]æˆç«‹
-		{ 9,22,12,20,"ç§‹å­£",true},// [ 9.22,12,20]æˆç«‹
-		{12,21, 3,19,"å†¬å­£",false},//[12.21,+âˆ)||(-âˆ,3.19]æˆç«‹
+		{ 3,20, 6,20,"´º¼¾",true},// [ 3.20, 6.20]³ÉÁ¢
+		{ 6,21, 9,21,"ÏÄ¼¾",true},// [ 6.21, 9.21]³ÉÁ¢
+		{ 9,22,12,20,"Çï¼¾",true},// [ 9.22,12,20]³ÉÁ¢
+		{12,21, 3,19,"¶¬¼¾",false},//[12.21,+¡Ş)||(-¡Ş,3.19]³ÉÁ¢
 	};
 
 	const char *ret = nullptr;
 	for (int i = 0; i < sizeof(stSeason) / sizeof(stSeason[0]); ++i)
 	{
-		//åˆ¤æ–­æœˆä»½åŒºé—´ä¼˜å…ˆï¼Œåªåœ¨æœˆä»½åŒºé—´å–åˆ°æ—¶åˆ¤æ–­æ—¥æœŸ
-		bool bBeg = iMonth > stSeason[i].iMonthBeg || (iMonth == stSeason[i].iMonthBeg && iDay >= stSeason[i].iDayBeg);//åˆ¤æ–­èµ·å§‹æœˆä»½å’Œæ—¥æœŸæ˜¯å¦åœ¨å·¦é—­åŒºé—´å†…
-		bool bEnd = iMonth < stSeason[i].iMonthEnd || (iMonth == stSeason[i].iMonthEnd && iDay <= stSeason[i].iDayEnd);//åˆ¤æ–­ç»ˆæ­¢æœˆä»½å’Œæ—¥æœŸæ˜¯å¦åœ¨å³é—­åŒºé—´å†…
-		bool bOpt = stSeason[i].bAnd ? bBeg && bEnd : bBeg || bEnd;//æ ¹æ®å¼€é—­ç¯çŠ¶æ€ç»„åˆèµ·å§‹å€¼å’Œç»ˆæ­¢å€¼æ˜¯åŒ…æ‹¬åŒºé—´è¿˜æ˜¯æ’é™¤åŒºé—´
+		//ÅĞ¶ÏÔÂ·İÇø¼äÓÅÏÈ£¬Ö»ÔÚÔÂ·İÇø¼äÈ¡µ½Ê±ÅĞ¶ÏÈÕÆÚ
+		bool bBeg = iMonth > stSeason[i].iMonthBeg || (iMonth == stSeason[i].iMonthBeg && iDay >= stSeason[i].iDayBeg);//ÅĞ¶ÏÆğÊ¼ÔÂ·İºÍÈÕÆÚÊÇ·ñÔÚ×ó±ÕÇø¼äÄÚ
+		bool bEnd = iMonth < stSeason[i].iMonthEnd || (iMonth == stSeason[i].iMonthEnd && iDay <= stSeason[i].iDayEnd);//ÅĞ¶ÏÖÕÖ¹ÔÂ·İºÍÈÕÆÚÊÇ·ñÔÚÓÒ±ÕÇø¼äÄÚ
+		bool bOpt = stSeason[i].bAnd ? bBeg && bEnd : bBeg || bEnd;//¸ù¾İ¿ª±Õ»·×´Ì¬×éºÏÆğÊ¼ÖµºÍÖÕÖ¹ÖµÊÇ°üÀ¨Çø¼ä»¹ÊÇÅÅ³ıÇø¼ä
 
-		if (bOpt)//æ ¹æ®æœ€ç»ˆçŠ¶æ€åˆ¤æ–­æ˜¯å¦è¾“å‡ºæœˆä»½è·³å‡ºå¾ªç¯
+		if (bOpt)//¸ù¾İ×îÖÕ×´Ì¬ÅĞ¶ÏÊÇ·ñÊä³öÔÂ·İÌø³öÑ­»·
 		{
 			ret = stSeason[i].pSeasonName;
 			break;
@@ -96,7 +96,7 @@ const char* Season(int iYear, int iMonth, int iDay)
 }
 
 /*
-æš´åŠ›æµ‹è¯•
+±©Á¦²âÊÔ
 for (int m = 1; m <= 12; ++m)
 {
 	printf("m:%d\n", m);
@@ -118,71 +118,3 @@ int main(void)
 	}
 	return 0;
 }
-
-/*
-//ä¸€è¡Œä¸€ä¸ªç½‘å€çš„æ–‡æœ¬æ–‡ä»¶
-//å‘½ä»¤è¡Œç¬¬ä¸€ä¸ªæ–‡æœ¬æ–‡æ¡£è·¯å¾„ï¼Œç¬¬äºŒä¸ªæ˜¯ä»ç¬¬å‡ è¡Œå¼€å§‹ï¼Œç¬¬ä¸‰ä¸ªæ˜¯åˆ°ç¬¬å‡ è¡Œï¼Œå¡«å†™-1æˆ–ä¸å†™é»˜è®¤æƒ…å†µæ˜¯ä»å¤´åˆ°æœ€åï¼Œç´¢å¼•ä»1å¼€å§‹ï¼ŒåŒ…å«æœ€åä¸€è¡Œ
-#include <stdio.h>
-#include <string>
-#include <fstream>
-#include <stdlib.h>
-
-
-int main(int argc, char *argv[])
-{
-	if (argc - 1 < 1 || argc - 1 > 3)//æœ€å°‘1ä¸ªå‚æ•°ï¼Œæœ€å¤§3ä¸ªï¼Œå‡ä¸€ä»£è¡¨å‡å»æœ¬èº«è‡ªå¸¦çš„ç¨‹åºè·¯å¾„
-	{
-		return -1;
-	}
-
-	FILE *fRead = fopen(argv[1], "r");
-	if (fRead == NULL)
-	{
-		return -1;
-	}
-
-	int Data[2] = {-1,-1};
-	int &iBeg = Data[0];
-	int &iEnd = Data[1];
-
-	for (int i = 2; i < argc; ++i)
-	{
-		Data[i - 2] = atoi(argv[i]);
-	}
-
-	if (iBeg <= 0)
-	{
-		iBeg = 1;
-	}
-
-	if (iEnd != -1 && iEnd < iBeg)
-	{
-		return -1;
-	}
-
-	std::string sLine;
-
-	for (int i = 1; i < iBeg; ++i)
-	{
-		while (fgetc(fRead) != '\n')
-		{
-			continue;
-		}
-	}
-
-	for (int i = iBeg; (i <= iEnd || iEnd == -1) && !feof(fRead); ++i)
-	{
-		std::getline(std::fstream(fRead), sLine, '\n');
-		sLine = "start " + sLine;
-		printf("%s\n", sLine.c_str());
-		while (getchar() != '\n')
-		{
-			continue;
-		}
-	}
-
-
-	fclose(fRead);
-	return 0;
-}
-*/
