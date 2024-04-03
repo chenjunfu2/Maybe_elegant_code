@@ -2,31 +2,37 @@
 #include <unordered_set>
 #include <stdio.h>
 
-//九宫格
+//九宫格类
 class NineSquares
 {
 private:
-	unsigned long long ullData;//内存布局：数组0~9放入低~高位
-	int iZeroPos;
+	unsigned long long ullData;//内存布局：数组0~9放入低~高位，用于存储九宫格实际数据，以压缩格式，每4bit存储一个值
+	int iZeroPos;//用于指示当前空位的下标
 public:
+	//默认无参构造
 	NineSquares(void) :ullData(0), iZeroPos(-1)
 	{}
 
+	//从uchar数组中构造
 	NineSquares(const unsigned char ucSquares[9])
 	{
 		Set(ucSquares);
 	}
 
+	//拷贝构造函数
 	NineSquares(const NineSquares &_NineSquares) :ullData(_NineSquares.ullData), iZeroPos(_NineSquares.iZeroPos)
 	{}
 
+	//默认析构函数
 	~NineSquares(void) = default;
 
+	//用于显示转换为类内部实际存储的压缩二进制数据
 	explicit operator unsigned long long(void) const
 	{
 		return ullData;
 	}
 
+	//从uchar数组中存储的九宫格压缩到二进制格式
 	void Set(const unsigned char ucSquares[9])
 	{
 		ullData = 0;
@@ -43,6 +49,7 @@ public:
 		}
 	}
 
+	//从二进制压缩格式的九宫格释放到uchar数组中
 	void Get(unsigned char ucSquares[9]) const
 	{
 		auto ullTemp = ullData;
@@ -53,16 +60,19 @@ public:
 		}
 	}
 
+	//用于获取空位（0方块）的下标
 	int GetZeroPos(void) const
 	{
 		return iZeroPos;
 	}
 
+	//判断两个九宫格是否完全相等
 	bool operator==(const NineSquares &_NineSquares) const
 	{
 		return ullData == _NineSquares.ullData;
 	}
 
+	//用于判断两个九宫格之间的相似性（差距）的函数，实际上返回数值位置相同的个数
 	int MatchingDegree(const NineSquares &_NineSquares) const
 	{
 		auto ullLeft = ullData;
@@ -82,11 +92,13 @@ public:
 		return iMatchingDegree;
 	}
 
+	//用于获取九宫格中对应位置值的函数
 	unsigned char Get(int iPos) const
 	{
 		return (unsigned char)((ullData >> (4 * iPos)) & 0b1111);
 	}
 
+	//用于设置九宫格中对应位置值的函数
 	void Set(int iPos, unsigned char ucNew)
 	{
 		//清零对应位置
@@ -101,6 +113,7 @@ public:
 		ullData |= ullNew;
 	}
 
+	//方位枚举
 	enum Direction :int
 	{
 		up = 0,
@@ -109,7 +122,7 @@ public:
 		rg,
 	};
 
-
+	//移动参数指示方向上的方块到空位（0方块）上
 	bool MoveToZeroBlock(Direction enDirection)
 	{
 		int iX = iZeroPos % 3;
@@ -151,7 +164,7 @@ public:
 	}
 };
 
-
+//树节点
 struct Node
 {
 	NineSquares csNineSquares{};//九宫格
@@ -162,6 +175,7 @@ struct Node
 	Node *pParent = nullptr;//父节点
 };
 
+//用于对key算hash的函数
 struct NodeHash
 {
 	size_t operator()(const Node *pNode) const
@@ -169,6 +183,8 @@ struct NodeHash
 		return std::hash<unsigned long long>()((unsigned long long)pNode->csNineSquares);
 	}
 };
+
+//用于哈希表相等判断的函数
 struct NodeEqual
 {
 	bool operator()(const Node *pNodeLeft, const Node *pNodeRight) const
@@ -177,6 +193,7 @@ struct NodeEqual
 	}
 };
 
+//用于优先级队列排序的比较函数
 struct NodeCmp
 {
 	bool operator()(const Node *pNodeLeft, const Node *pNodeRight) const
@@ -185,10 +202,11 @@ struct NodeCmp
 	}
 };
 
+//保护成员偷家用的类
 class Clear :public std::priority_queue<Node *, std::deque<Node *>, NodeCmp>
 {
 public:
-	std::deque<Node *> GetData(void)
+	std::deque<Node *> &GetData(void)
 	{
 		return c;
 	}
@@ -241,7 +259,7 @@ long long AStarSearch(const NineSquares &csBeg, const NineSquares &csEnd)
 			}
 
 			//已经扩展过，跳过该点
-			if (Node csTest{ csNew }; CloseList.find(&csTest) != CloseList.end())
+			if (CloseList.find((Node*)&csNew) != CloseList.end())
 			{
 				continue;
 			}
@@ -270,11 +288,11 @@ long long AStarSearch(const NineSquares &csBeg, const NineSquares &csEnd)
 	}
 	else
 	{
-		i = -1;
+		i = -1;//没找到返回-1
 	}
 
 	//清理资源
-	auto csDeque = ((Clear *)&OpenList)->GetData();//偷家类，把对面保护成员偷出来释放
+	auto &csDeque = ((Clear *)&OpenList)->GetData();//偷家类，把对面保护成员偷出来释放
 	for (auto it : csDeque)
 	{
 		delete it;
